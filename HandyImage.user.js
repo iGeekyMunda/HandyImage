@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name		Handy Image
-// @version		2026.10.07
+// @version		2026.10.11
 // @author		Owyn
 // @contributor	ubless607, bitst0rm
+// @description_extra Fixed imagepond.net videos (prefer og:video over thumbnail)
 // @namespace	handyimage
 // @description	Shows just fullsize Image with hotkeys & without pop-ups on many image-hosting sites
 // @updateURL	https://github.com/Owyn/HandyImage/raw/master/HandyImage.user.js
@@ -1467,7 +1468,6 @@ function makeworld()
 	case "vgy.me":
 	case "hamsterimg.net":
 	case "shotcan.com":
-	case "imagepond.net":
 		i = document.querySelector('meta[property="og:image"], [name="og:image"]');
 		if(i)
 		{
@@ -1477,6 +1477,27 @@ function makeworld()
 		{
 			i = q('a[download]');
 			if(i){i.src = i.href;}
+		}
+		break;
+	case "imagepond.net":
+		// Prefer og:video for actual video files; fall back to og:image (thumbnail for videos, full image otherwise)
+		i = document.querySelector('meta[property="og:video"]');
+		if(i)
+		{
+			i.src = i.content;
+		}
+		else
+		{
+			i = document.querySelector('meta[property="og:image"], [name="og:image"]');
+			if(i)
+			{
+				i.src = i.content;
+			}
+			else
+			{
+				i = q('a[download]');
+				if(i){i.src = i.href;}
+			}
 		}
 		break;
 	case "reddit.com":
